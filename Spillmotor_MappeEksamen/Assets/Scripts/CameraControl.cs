@@ -9,9 +9,9 @@ public class CameraControl : MonoBehaviour
     [SerializeField] GameObject Camera3;
 
     public Transform target;
-    public Vector3 Camera1_offset;
-    public Vector3 Camera2_offset;
-    public Vector3 Camera3_offset;
+    public Vector3 Camera1_offset; // Sideview  | X: 5.57, Y: 1, Z: 0               | same
+    public Vector3 Camera2_offset; // Telescope | X: -1.67, Y: 3.38, Z: 0           | X: 0, Y: 3.38, Z: 0
+    public Vector3 Camera3_offset; // Birdview  | X: -1.609, Y: 7.632, Z: -2.195    | X: 0, Y: 6, Z: -1.23
 
     // I use this variable to change horizontal and vertical movement in the PlayerController script
     public static int activeCameraNr = 1;
