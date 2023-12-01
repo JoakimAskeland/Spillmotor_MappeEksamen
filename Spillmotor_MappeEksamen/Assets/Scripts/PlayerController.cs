@@ -5,6 +5,9 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] public float _speed = 1f;
+    [SerializeField] public float maxSpeed = 1f;
+    [SerializeField] public float acceleration = 1f;
+    [SerializeField] public float deceleration = 1f;
     [SerializeField] private Rigidbody _rb;
 
     public static float _depth;
@@ -12,6 +15,23 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Setting speed
+        /*
+        if (_speed < maxSpeed)
+            _speed = _speed - acceleration * Time.deltaTime;
+        else if (_speed > -maxSpeed)
+            _speed = _speed + acceleration * Time.deltaTime;
+        else
+        {
+            if (_speed > deceleration * Time.deltaTime)
+                _speed = _speed - deceleration * Time.deltaTime;
+            else if (_speed < -deceleration * Time.deltaTime)
+                _speed = _speed + deceleration * Time.deltaTime;
+            else
+                _speed = 0f;
+        }
+        */
+
         // Use these controls when Camera1 is active
         if (CameraControl.activeCameraNr == 1)
         {
@@ -37,9 +57,8 @@ public class PlayerController : MonoBehaviour
             var ascend = new Vector3(0, 1, 0);
             _rb.velocity += ascend;
         }
-
-        _depth = _rb.position.y;
-
         
+        // Updating _depth for using it in HUD.cs
+        _depth = _rb.position.y;
     }
 }

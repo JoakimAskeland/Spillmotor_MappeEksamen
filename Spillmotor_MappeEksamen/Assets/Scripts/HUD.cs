@@ -29,10 +29,10 @@ public class HUD : MonoBehaviour
 
         // Showing the submarines depth
         depthText.text = "Depth: " + depth.ToString("f2");
-        depth = PlayerController._depth;
+        depth = PlayerController._depth * 10;
 
         //speedText.text = speed.ToString("f0") + " km/h";
         //speed = PlayerController._speed; 
-        // Might be able to showcase if the submarine is moving thorugh a boolean that is set to true or false under every movement statement in PlayerController
+        // Might be able to showcase if the submarine is moving through a boolean that is set to true or false under every movement statement in PlayerController
     }
 }
