@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -15,23 +16,6 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // Setting speed
-        /*
-        if (_speed < maxSpeed)
-            _speed = _speed - acceleration * Time.deltaTime;
-        else if (_speed > -maxSpeed)
-            _speed = _speed + acceleration * Time.deltaTime;
-        else
-        {
-            if (_speed > deceleration * Time.deltaTime)
-                _speed = _speed - deceleration * Time.deltaTime;
-            else if (_speed < -deceleration * Time.deltaTime)
-                _speed = _speed + deceleration * Time.deltaTime;
-            else
-                _speed = 0f;
-        }
-        */
-
         // Use these controls when Camera1 is active
         if (CameraControl.activeCameraNr == 1)
         {
@@ -57,8 +41,16 @@ public class PlayerController : MonoBehaviour
             var ascend = new Vector3(0, 1, 0);
             _rb.velocity += ascend;
         }
-        
+
+        // Not working...
+        //Mathf.Clamp(_rb.position.y, -1099, 0);
+        //if (_rb.position.y > 0.2)
+        //{
+        //    _rb.position.Set(0, 0, 0);
+        //}
+
         // Updating _depth for using it in HUD.cs
-        _depth = _rb.position.y;
+        _depth = _rb.position.y * 10; // multiplying it just to make the simulation of pressure go a bit faster.
+
     }
 }
