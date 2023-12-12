@@ -12,16 +12,22 @@ public class PlayerController : MonoBehaviour
     [SerializeField] public float deceleration = 1f;
     [SerializeField] private Rigidbody _rb;
     [SerializeField] GameObject debris;
-    [SerializeField] GameObject oceanFloor; 
+    [SerializeField] GameObject oceanFloor;
+    [SerializeField] GameObject implosionText;
+
+    // Sound
+    [SerializeField] AudioSource _sonarAudioSource;
+    [SerializeField] AudioSource _implosionAudioSource; 
 
     public static float _depth;
     public static float _speedHUD;
-    float implosionToMenutimer = 3; 
+    float implosionToMenutimer = 5; 
 
     private void Awake()
     {
         debris.SetActive(false);
         oceanFloor.SetActive(false);
+        implosionText.SetActive(false); 
     }
 
     // Update is called once per frame
@@ -74,7 +80,7 @@ public class PlayerController : MonoBehaviour
         // Go back to menu
         if (Input.GetKey(KeyCode.Escape))
         {
-            SceneManager.LoadScene(0);
+            LoadMenu();
         }
     }
 
@@ -85,17 +91,10 @@ public class PlayerController : MonoBehaviour
         _depth = _rb.position.y * 100; // multiplying it just to make the simulation of pressure go a bit faster.
         _speedHUD = -_rb.velocity.y * 100;
 
+        // Maximum depth before implosion.
         if (_depth <= -1000)
         {
-            var objectPosition = _rb.position;
-            gameObject.SetActive(false);
-
-            // Replace the submarine with a sheet of metal, representing the implosion
-            debris.SetActive(true);
-            debris.transform.position = objectPosition;
-
-            // Load the Menu scene after a set amount of time.
-            Invoke(nameof(LoadMenu), implosionToMenutimer);
+            Implosion();
         }
     }
 
@@ -106,17 +105,10 @@ public class PlayerController : MonoBehaviour
         _depth = _rb.position.y * 100; // multiplying it just to make the simulation of pressure go a bit faster.
         _speedHUD = -_rb.velocity.y * 100;
 
+        // Maximum depth before implosion.
         if (_depth <= -1300)
         {
-            var objectPosition = _rb.position;
-            gameObject.SetActive(false);
-
-            // Replace the submarine with a sheet of metal, representing the implosion
-            debris.SetActive(true);
-            debris.transform.position = objectPosition;
-
-            // Load the Menu scene after a set amount of time.
-            Invoke(nameof(LoadMenu), implosionToMenutimer);
+            Implosion();
         }
     }
 
@@ -135,8 +127,29 @@ public class PlayerController : MonoBehaviour
         if (_depth <= -12000)
         {
             Debug.Log("You are below the bottom of the ocean, mate.");
+            Debug.Log("Press Esc to go back to the menu.");
             // Debug.Log("rb position" + _rb.position.y);
         }
+    }
+
+    public void Implosion()
+    {
+        var objectPosition = _rb.position;
+        gameObject.SetActive(false);
+
+        // Replace the submarine with a sheet of metal, representing the implosion
+        debris.SetActive(true);
+        debris.transform.position = objectPosition;
+
+        // Show text that explains to the user that the submarine has imploded.
+        implosionText.SetActive(true);
+
+        // Stops the sonar sound and plays the implosion sound.
+        _sonarAudioSource.Stop();
+        _implosionAudioSource.Play();
+
+        // Load the Menu scene after a set amount of time.
+        Invoke(nameof(LoadMenu), implosionToMenutimer);
     }
 
     public void LoadMenu()

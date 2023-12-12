@@ -11,6 +11,7 @@ public class HUD : MonoBehaviour
     [SerializeField] private TMP_Text timeText;
     [SerializeField] private TMP_Text pressureText;
     [SerializeField] private TMP_Text speedText;
+    //[SerializeField] GameObject implosionText;
 
     private float depth = 0; // depth at sea level
     private float atmospheres = 0.1f; // atmospheres at sea level
@@ -22,7 +23,12 @@ public class HUD : MonoBehaviour
     public Menu bSubmarineMaterial;
 
     public Color black => Color.black;
-    public Color red => Color.red; 
+    public Color red => Color.red;
+
+    private void Awake()
+    {
+        //implosionText.SetActive(false);
+    }
 
     // Update is called once per frame
     private void FixedUpdate()
