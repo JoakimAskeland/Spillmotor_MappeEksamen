@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -10,8 +11,18 @@ public class PlayerController : MonoBehaviour
     [SerializeField] public float acceleration = 1f;
     [SerializeField] public float deceleration = 1f;
     [SerializeField] private Rigidbody _rb;
+    [SerializeField] GameObject debris;
+    [SerializeField] GameObject oceanFloor; 
 
     public static float _depth;
+    public static float _speedHUD;
+    float implosionToMenutimer = 3; 
+
+    private void Awake()
+    {
+        debris.SetActive(false);
+        oceanFloor.SetActive(false);
+    }
 
     // Update is called once per frame
     void Update()
@@ -42,15 +53,94 @@ public class PlayerController : MonoBehaviour
             _rb.velocity += ascend;
         }
 
-        // Not working...
-        //Mathf.Clamp(_rb.position.y, -1099, 0);
-        //if (_rb.position.y > 0.2)
-        //{
-        //    _rb.position.Set(0, 0, 0);
-        //}
-
         // Updating _depth for using it in HUD.cs
-        _depth = _rb.position.y * 10; // multiplying it just to make the simulation of pressure go a bit faster.
+        //_depth = _rb.position.y * 10; // multiplying it just to make the simulation of pressure go a bit faster.
 
+        if (Menu.Steel)
+        {
+            HighGradeSteelSubmarine();
+        }
+
+        if (Menu.Titanium)
+        { 
+            TitaniumSubmarine();
+        }
+
+        if (Menu.Trieste)
+        {
+            TriesteSubmarine();
+        }
+
+        // Go back to menu
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            SceneManager.LoadScene(0);
+        }
+    }
+
+    // High Grade Steel called HY-100, which is meant to withstand up to 100 atmospheres, based on a Seawolf submarine. It has an estimated crush dept of about 730m. - https://www.allthescience.org/what-is-the-deepest-depth-a-submarine-can-go.htm 
+    public void HighGradeSteelSubmarine()
+    {
+        // Updating _depth and _speedHUD for using it in HUD.cs
+        _depth = _rb.position.y * 100; // multiplying it just to make the simulation of pressure go a bit faster.
+        _speedHUD = -_rb.velocity.y * 100;
+
+        if (_depth <= -1000)
+        {
+            var objectPosition = _rb.position;
+            gameObject.SetActive(false);
+
+            // Replace the submarine with a sheet of metal, representing the implosion
+            debris.SetActive(true);
+            debris.transform.position = objectPosition;
+
+            // Load the Menu scene after a set amount of time.
+            Invoke(nameof(LoadMenu), implosionToMenutimer);
+        }
+    }
+
+    // Based on Soviet submarine "K-278 Komsomolets", with a hull made of titanium. It was designed to make trips as far down as 1300 meters below sea level. - https://www.allthescience.org/what-is-the-deepest-depth-a-submarine-can-go.htm 
+    public void TitaniumSubmarine()
+    {
+        // Updating _depth and _speedHUD for using it in HUD.cs
+        _depth = _rb.position.y * 100; // multiplying it just to make the simulation of pressure go a bit faster.
+        _speedHUD = -_rb.velocity.y * 100;
+
+        if (_depth <= -1300)
+        {
+            var objectPosition = _rb.position;
+            gameObject.SetActive(false);
+
+            // Replace the submarine with a sheet of metal, representing the implosion
+            debris.SetActive(true);
+            debris.transform.position = objectPosition;
+
+            // Load the Menu scene after a set amount of time.
+            Invoke(nameof(LoadMenu), implosionToMenutimer);
+        }
+    }
+
+    // US Navy built a pressured sphere with steel walls 12.7cm thick. - https://www.allthescience.org/what-is-the-deepest-depth-a-submarine-can-go.htm 
+    public void TriesteSubmarine()
+    {
+        var multiplyer = 1000;
+
+        // Updating _depth and _speedHUD for using it in HUD.cs
+        _depth = _rb.position.y * multiplyer; // multiplying it just to make the simulation of pressure go a bit faster.
+        _speedHUD = -_rb.velocity.y * 100;
+
+        oceanFloor.transform.position = new Vector3(0, (-12000 / multiplyer), 0);
+        oceanFloor.SetActive(true);
+
+        if (_depth <= -12000)
+        {
+            Debug.Log("You are below the bottom of the ocean, mate.");
+            // Debug.Log("rb position" + _rb.position.y);
+        }
+    }
+
+    public void LoadMenu()
+    {
+        SceneManager.LoadScene(0);
     }
 }

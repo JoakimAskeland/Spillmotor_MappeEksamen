@@ -12,20 +12,17 @@ public class HUD : MonoBehaviour
     [SerializeField] private TMP_Text pressureText;
     [SerializeField] private TMP_Text speedText;
 
-    private float depth = 0;
-    private float atmospheres = 0.1f;
-    private float psi = 14.7f;
+    private float depth = 0; // depth at sea level
+    private float atmospheres = 0.1f; // atmospheres at sea level
+    private float psi = 14.7f; // psi at sea level
     private float time = 0;
-    //private float speed = 0;
+    private float speed = 0;
+
+    // For getting booleans from Menu which tells which material the user have chosen.
+    public Menu bSubmarineMaterial;
 
     public Color black => Color.black;
     public Color red => Color.red; 
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
     // Update is called once per frame
     private void FixedUpdate()
@@ -41,7 +38,15 @@ public class HUD : MonoBehaviour
         // Showing the pressure levels, calculated from the depth of the submarine
         pressureText.text = "Atmospheres: " + atmospheres.ToString("f1") + "\n" + "psi: " + psi.ToString("f1");
         // if pressure is critical, show txt as red or have warnings flash over the screen
-        if (atmospheres > 1)
+        if (Menu.Steel && atmospheres > 90)
+        {
+            pressureText.color = WarningFlash(black, red, 5);
+        }
+        else if (Menu.Titanium && atmospheres > 120)
+        {
+            pressureText.color = WarningFlash(black, red, 5);
+        }
+        else if (Menu.Trieste && atmospheres > 1100)
         {
             pressureText.color = WarningFlash(black, red, 5);
         }
@@ -51,8 +56,8 @@ public class HUD : MonoBehaviour
         }
 
         //speedText.color = Color.red; 
-        //speedText.text = speed.ToString("f0") + " km/h";
-        //speed = PlayerController._speed; 
+        speedText.text = speed.ToString("f0") + " km/h";
+        speed = PlayerController._speedHUD; 
         // Might be able to showcase if the submarine is moving through a boolean that is set to true or false under every movement statement in PlayerController
     }
 
